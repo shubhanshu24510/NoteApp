@@ -8,4 +8,6 @@ interface NoteRepository {
     suspend fun upsertNote(note: NoteItem)
     suspend fun deleteNote(note: NoteItem)
     suspend fun searchImages(query: String): Images?
+    suspend fun getNoteById(noteId: Int): NoteItem?
+    suspend fun updateNote(noteItem: NoteItem)
 }

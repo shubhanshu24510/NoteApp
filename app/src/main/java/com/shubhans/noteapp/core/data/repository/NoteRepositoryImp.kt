@@ -32,4 +32,12 @@ class NoteRepositoryImp(
     override suspend fun searchImages(query: String): Images? {
         return imageApi.searchImages(query)?.toImages()
     }
+
+    override suspend fun getNoteById(noteId: Int): NoteItem? {
+        return noteDao.getNoteById(noteId)?.toNoteItem()
+    }
+
+    override suspend fun updateNote(noteItem: NoteItem) {
+        noteDao.updateNote(noteItem.toNoteEntity())
+    }
 }

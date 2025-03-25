@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
@@ -42,8 +43,13 @@ import com.shubhans.noteapp.note_List.presentation.components.ListNoteItem
 @Composable
 fun NoteListScreen(
     onAddNoteClick: () -> Unit,
+    onNoteClick: (Int) -> Unit,
     noteListViewModel: NoteListViewModel = hiltViewModel(),
 ) {
+    // Ensure notes are loaded on screen entry
+    LaunchedEffect(Unit) {
+        noteListViewModel.loadNotes()
+    }
     val noteListState by noteListViewModel.noteListState.collectAsState()
     val orderByTitleState by noteListViewModel.orderByTitleState.collectAsState()
     Scaffold(
@@ -105,16 +111,20 @@ fun NoteListScreen(
                 .padding(top = paddingValues.calculateTopPadding()),
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
-
             items(
-                count = noteListState.size,
-                key = { it }
-            ) { index ->
+                items = noteListState,
+                key = { it.id ?: 0 }
+            ) { noteItem ->
                 ListNoteItem(
-                    onDeleteClick = {
-                        noteListViewModel.deleteNote(noteListState[index])
+                    noteItem = noteItem,
+                    onNoteClick = {
+                        noteItem.id?.let { noteId ->
+                            onNoteClick(noteId)
+                        }
                     },
-                    noteItem = noteListState[index]
+                    onDeleteClick = {
+                        noteListViewModel.deleteNote(noteItem)
+                    }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }

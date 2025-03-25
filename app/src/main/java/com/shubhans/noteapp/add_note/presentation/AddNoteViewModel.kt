@@ -3,9 +3,11 @@ package com.shubhans.noteapp.add_note.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.util.query
+import com.shubhans.noteapp.add_note.domain.GetNoteById
 import com.shubhans.noteapp.add_note.domain.SearchImages
 import com.shubhans.noteapp.add_note.domain.UpsertNotes
 import com.shubhans.noteapp.add_note.presentation.utils.Resource
+import com.shubhans.noteapp.core.domain.model.NoteItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -20,9 +22,11 @@ import javax.inject.Inject
 @HiltViewModel
 class AddNoteViewModel @Inject constructor(
     private val upsertNotes: UpsertNotes,
-    private val searchImages: SearchImages
+    private val searchImages: SearchImages,
+    private val getNoteById: GetNoteById  // Use the new use case
 ) : ViewModel() {
     private var searchJob: Job? = null
+    private var currentNoteId: Int? = null // Tracks if we are editing an existing note
 
     private val _addNoteState = MutableStateFlow(AddNoteState())
     val addNoteState = _addNoteState.asStateFlow()
@@ -62,6 +66,25 @@ class AddNoteViewModel @Inject constructor(
             is AddNoteAction.UpdateSearchImageQuery -> {
                 _addNoteState.update { it.copy(searchImagesQuery = action.newQuery) }
                 onSearchImages(query = action.newQuery)
+            }
+        }
+    }
+
+    // Called when opening the Add/Edit screen to load existing note data if available
+    internal fun loadNoteForEditing(noteId: Int?) {
+        if (noteId != null && noteId != currentNoteId) {
+            currentNoteId = noteId
+            viewModelScope.launch {
+                val existingNote = getNoteById(noteId)
+                existingNote?.let {
+                    _addNoteState.update { state ->
+                        state.copy(
+                            title = it.title,
+                            description = it.description,
+                            imageUrl = it.imageUrl
+                        )
+                    }
+                }
             }
         }
     }

@@ -5,5 +5,5 @@ data class NoteItem(
     var description: String,
     var imageUrl: String,
     var dateAdded: Long,
-    val id: Int = 0,
+    val id: Int? = 0,
 )

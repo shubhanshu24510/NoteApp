@@ -40,10 +40,16 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AddNoteScreenRoot(
+    noteId: Int? = null,
     onSaveNote: () -> Unit,
     addNoteViewModel: AddNoteViewModel = hiltViewModel()
 ) {
+    // Load existing note data for editing
+    LaunchedEffect(key1 = noteId) {
+        addNoteViewModel.loadNoteForEditing(noteId)
+    }
     val context = LocalContext.current
+    // Collect the flow to observe the state of the note being saved
     LaunchedEffect(key1 = true) {
         addNoteViewModel.noteSavedFlow.collectLatest { saved ->
             if (saved) {

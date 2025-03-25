@@ -7,6 +7,7 @@ class UpsertNotes(
     private val noteRepository: NoteRepository
 ) {
     suspend operator fun invoke(
+        noteId: Int? = null,
         title: String,
         description: String,
         imageUrl: String
@@ -16,6 +17,7 @@ class UpsertNotes(
         }
 
         val note = NoteItem(
+            id = noteId,
             title = title,
             description = description,
             imageUrl = imageUrl,

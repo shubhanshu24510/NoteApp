@@ -34,6 +34,7 @@ import com.shubhans.noteapp.core.domain.model.NoteItem
 fun ListNoteItem(
     onDeleteClick: () -> Unit,
     noteItem: NoteItem,
+    onNoteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -44,6 +45,7 @@ fun ListNoteItem(
             .clip(RoundedCornerShape(20.dp))
             .background(MaterialTheme.colorScheme.primary)
             .padding(8.dp)
+            .clickable { onNoteClick() }
     ) {
         AsyncImage(
             modifier = Modifier

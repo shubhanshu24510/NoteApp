@@ -2,6 +2,7 @@ package com.shubhans.noteapp.core.di
 
 import android.app.Application
 import androidx.room.Room
+import com.shubhans.noteapp.add_note.domain.GetNoteById
 import com.shubhans.noteapp.add_note.domain.SearchImages
 import com.shubhans.noteapp.add_note.domain.UpsertNotes
 import com.shubhans.noteapp.core.data.local.NoteDatabase
@@ -10,6 +11,7 @@ import com.shubhans.noteapp.core.data.repository.NoteRepositoryImp
 import com.shubhans.noteapp.core.domain.repository.NoteRepository
 import com.shubhans.noteapp.note_List.domain.use_cases.DeleteNote
 import com.shubhans.noteapp.note_List.domain.use_cases.GetAllNotes
+import com.shubhans.noteapp.note_List.domain.use_cases.UpdateNote
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -72,6 +74,21 @@ object AppModule {
         noteRepository: NoteRepository
     ): UpsertNotes {
         return UpsertNotes(noteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetNoteByIdUseCase(
+        noteRepository: NoteRepository
+    ): GetNoteById {
+        return GetNoteById(noteRepository)
+    }
+
+    @Provides
+    fun provideUpdateNote(
+        noteRepository: NoteRepository
+    ): UpdateNote {
+        return UpdateNote(noteRepository)
     }
 
     @Provides
